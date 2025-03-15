@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Console and Chat Box</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        #console {
+            background-color: #333;
+            color: white;
+            height: 300px;
+            width: 100%;
+            overflow-y: scroll;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        #chat-box {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        #chat-box input, #chat-box button {
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Console</h2>
+<div id="console">
+    <p>Welcome to the test page.</p>
+    <p>Type something in the chat box below! With a Chat Id </p>
+</div>
+
+<h2>Chat Box</h2>
+<div id="chat-box">
+    <input type="text" id="chatid" placeholder="Enter Chat ID" value="chatId1" />
+    <input type="text" id="message" placeholder="Type your message..." />
+    <button onclick="sendMessage()">Send</button>
+</div>
+
+<script>
+    // Function to send the message to the /chat endpoint
+    function sendMessage() {
+        var message = document.getElementById("message").value;
+        var chatId = document.getElementById("chatid").value;
+
+        if (message && chatid) {
+            var consoleDiv = document.getElementById("console");
+            var p = document.createElement("p");
+            p.textContent = "Question : " + message; // The response will be the formatted chat message
+            consoleDiv.appendChild(p);
+            // Use fetch to call the REST API with chatid, input, and user
+            fetch(`/history-chat?input=${encodeURIComponent(message)}&chatId=${encodeURIComponent(chatId)}`)
+                .then(response => response.text())
+                .then(data => {
+                    // Append the message to the console
+                    var consoleDiv = document.getElementById("console");
+                    var p = document.createElement("p");
+                    p.textContent = data; // The response will be the formatted chat message
+                    consoleDiv.appendChild(p);
+                    document.getElementById("message").value = ""; // Clear input field
+
+                    consoleDiv.scrollTop = consoleDiv.scrollHeight; // Auto scroll to bottom
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        } else {
+            alert('Please provide both Chat ID and Message!');
+        }
+    }
+</script>
+
+</body>
+</html>
