@@ -8,16 +8,17 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Stream;
 
 @RestController
 @Slf4j
 public class ChatController {
 
-    final ChatPromptService historyPromptService;
+    final ChatPromptService chatPromptService;
     final HashMap<String, ChatHistory> chatHistoryCache = new HashMap<>();
 
-    public ChatController(ChatPromptService historyPromptService) {
-        this.historyPromptService = historyPromptService;
+    public ChatController(ChatPromptService chatPromptService) {
+        this.chatPromptService = chatPromptService;
     }
 
     @PostMapping("/chat")
@@ -27,11 +28,12 @@ public class ChatController {
                                     @RequestParam(name = "modelId", required=false) String modelId){
         // Get any history by chatId
         var chatHistory = getChatHistory(input, chatId);
-        var result = historyPromptService.getChatCompletions(chatHistory,modelId, promptExecutionSettings);
+        var result = chatPromptService.getChatCompletions(chatHistory,modelId, promptExecutionSettings);
         // Print question and answer logs.
         log.info("Question : {}", input);
-        log.info("{}", String.join("\n", result));
-        return result;
+        var filteredResult = result.stream().filter(s -> s != null && !s.isEmpty()).toList();
+        log.info("{}", String.join("\n", filteredResult));
+        return filteredResult;
     }
 
     private ChatHistory getChatHistory(String input, String chatId){

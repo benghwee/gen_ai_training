@@ -4,15 +4,13 @@ package com.epam.training.gen.ai.config;
 import com.azure.ai.openai.OpenAIAsyncClient;
 import com.azure.ai.openai.OpenAIClientBuilder;
 import com.azure.core.credential.AzureKeyCredential;
+import com.epam.training.gen.ai.plugin.BmiCalculatorPlugin;
+import com.epam.training.gen.ai.plugin.CurrencyRatePlugin;
 import com.epam.training.gen.ai.provider.ChatCompletionProvider;
 import com.epam.training.gen.ai.provider.InvocationContextProvider;
 import com.microsoft.semantickernel.Kernel;
-import com.microsoft.semantickernel.aiservices.openai.chatcompletion.OpenAIChatCompletion;
-import com.microsoft.semantickernel.orchestration.PromptExecutionSettings;
-import com.microsoft.semantickernel.semanticfunctions.KernelFunction;
-import com.microsoft.semantickernel.semanticfunctions.KernelFunctionFromPrompt;
-import com.microsoft.semantickernel.services.AIServiceCollection;
-import com.microsoft.semantickernel.services.chatcompletion.ChatCompletionService;
+import com.microsoft.semantickernel.plugin.KernelPlugin;
+import com.microsoft.semantickernel.plugin.KernelPluginFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 
@@ -61,8 +59,21 @@ public class Configuration {
     }
 
     @Bean
-    public Kernel kernel() {
+    public List<KernelPlugin> kernelPlugins() {
+        return List.of(
+                KernelPluginFactory.createFromObject(new BmiCalculatorPlugin(), "BmiCalculatorPlugin"),
+                KernelPluginFactory.createFromObject(new CurrencyRatePlugin(), "CurrencyRatePlugin"));
+    }
+
+    @Bean
+    public Kernel kernel(List<KernelPlugin> plugins) {
+        System.out.println("plugins " + plugins.size());
+        //var builder =  Kernel.builder();
+        //plugins.forEach(builder::withPlugin);
+        //return builder.build();
         return Kernel.builder()
+                .withPlugin(KernelPluginFactory.createFromObject(new BmiCalculatorPlugin(), "BmiCalculatorPlugin"))
+                .withPlugin(KernelPluginFactory.createFromObject(new CurrencyRatePlugin(), "CurrencyRatePlugin"))
                 .build();
     }
 }
