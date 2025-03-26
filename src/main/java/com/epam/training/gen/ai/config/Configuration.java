@@ -67,13 +67,15 @@ public class Configuration {
 
     @Bean
     public Kernel kernel(List<KernelPlugin> plugins) {
-        System.out.println("plugins " + plugins.size());
-        //var builder =  Kernel.builder();
-        //plugins.forEach(builder::withPlugin);
-        //return builder.build();
+        var builder =  Kernel.builder();
+        plugins.forEach(builder::withPlugin);
+        return builder.build();
+        /**
+        Alternative way to insert multiple plugin 
         return Kernel.builder()
                 .withPlugin(KernelPluginFactory.createFromObject(new BmiCalculatorPlugin(), "BmiCalculatorPlugin"))
                 .withPlugin(KernelPluginFactory.createFromObject(new CurrencyRatePlugin(), "CurrencyRatePlugin"))
                 .build();
+       **/
     }
 }
