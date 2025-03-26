@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Chat with Image Response</title>
+    <style>
+        body {
+           font-family: Arial, Helvetica, sans-serif;
+           margin: 20px;
+           padding: 0;
+        }
+        #chat-container {
+           margin-top: 20px;
+        }
+        #chat-box {
+           width: 500px;
+           height: 150px;
+           border: 1px solid #ccc;
+           padding: 10px;
+           overflow-y: auto;
+           margin-bottom: 10px;
+        }
+        #chat-form {
+           display: flex;
+           width: 500px;
+        }
+        #chat-input {
+           flex-grow: 1;
+           padding: 10px;
+           border: 1px solid #ccc;
+           border-right: none;
+        }
+        #send-btn {
+           padding: 10px 20px;
+           border: 1px solid #ccc;
+           cursor: pointer;
+           background-color: #f0f0f0;
+        }
+       img {
+         display: block;
+         max-width:500px;
+         max-height:500px;
+         width: auto;
+         height: auto;
+       }
+       img:not([src]), img[src=""] {
+            display: none;
+       }
+    </style>
+</head>
+<body>
+<h1>Chatbot Interface with Image Response.</h1> <!-- This is where the fetched image will be displayed -->
+
+<div><img id="image" alt="Fetched Image" src=""/></div>
+<div id="loading" style="display: none;">
+    <h4 style="color:blue;">Please be patient while loading...</h4>
+</div>
+<!-- Chat container -->
+<div id="chat-container">
+    <div id="chat-box"></div>
+    <form id="chat-form">
+        <input
+                type="text"
+                id="chat-input"
+                placeholder="Type your message..."
+                required
+        />
+        <button type="submit" id="send-btn">Send</button>
+    </form>
+</div>
+
+<script>
+    // Reference elements
+     const chatForm = document.getElementById('chat-form');
+     const chatInput = document.getElementById('chat-input');
+     const chatBox = document.getElementById('chat-box');
+     const imageElement = document.getElementById('image');
+     const loadingIndicator = document.getElementById('loading'); // Loading div
+
+     // Helper function to add messages
+     function addMessage(content, type) {
+         const messageElem = document.createElement('div');
+         messageElem.style.margin = '5px 0';
+         messageElem.textContent = content;
+         messageElem.style.textAlign = type === 'sent' ? 'right' : 'left';
+         messageElem.style.color = type === 'sent' ? 'blue' : 'green';
+         chatBox.appendChild(messageElem);
+         chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll
+     }
+
+     // Hide image initially
+     imageElement.style.display = 'none';
+
+     // Listen for form submission
+     chatForm.addEventListener('submit', function (event) {
+         event.preventDefault(); // Prevent page reload
+         const message = chatInput.value.trim();
+         if (!message) return;
+
+         addMessage('You: ' + message, 'sent');
+         chatInput.value = '';
+
+         // Show loading icon
+         loadingIndicator.style.display = 'block';
+
+         // Fetch the Base64 image
+         fetch('/image-chat?input=' + encodeURIComponent(message))
+             .then(response => response.text()) // Expected Base64 string
+             .then(base64String => {
+                 if (!base64String.trim()) {
+                     throw new Error("Empty image response");
+                 }
+
+                 // Hide loading, show image
+                 loadingIndicator.style.display = 'none';
+                 imageElement.src = 'data:image/png;base64,' + base64String;
+                 imageElement.style.display = 'block';
+
+                 addMessage('Bot: Here is your image.', 'received');
+             })
+             .catch(error => {
+                 console.error('Error fetching image:', error);
+                 loadingIndicator.style.display = 'none';
+                 addMessage('Bot: Sorry, an error occurred while fetching the image.', 'received');
+             });
+     });
+
+     // Hide image if loading fails
+     imageElement.onerror = function () {
+         imageElement.style.display = 'none';
+         loadingIndicator.style.display = 'none';
+     };
+
+</script>

@@ -11,5 +11,4 @@ public class GenAiTrainingApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(GenAiTrainingApplication.class, args);
 	}
-
 }
