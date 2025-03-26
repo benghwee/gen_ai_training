@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Console and Chat Box</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+       .settingLabel {
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Post Embedding Data</h2>
+<div id="console">
+    <p>Welcome to the test page. It might take 10-20s to insert these data.</p>
+    <label for="content"></label>
+    <textarea id="content" name="content" rows="30" cols="200">
+    {
+    "contents" : [
+		"Break the ice Meaning: To start a conversation or make people feel more comfortable. Example: To break the ice at the party, I said hello to the person next to me.",
+		"Cut corners Meaning: To do something in the easiest or cheapest way, often badly. Example: The company cut corners on safety to save money, which caused problems.",
+		"Hit the nail on the head Meaning: To describe something exactly right. Example: You’ve hit the nail on the head with your idea about the problem.",
+		"Piece of cake Meaning: Something very easy to do. Example: The test was a piece of cake; I finished it very quickly.",
+		"Cost an arm and a leg Meaning: To be very expensive Example: That new phone costs an arm and a leg; I can’t buy it now.",
+		"Bite off more than you can chew Meaning: To try to do more than you can manage. Example: By agreeing to do two big projects at once, I bit off more than I could chew.",
+		"Beat around the bush Meaning: To avoid talking about what’s important. Example: Please stop beating around the bush and tell me what happened.",
+		"Cry over spilled milk Meaning: To be upset about something that has already happened and can’t be changed. Example: Don’t cry over spilled milk; let’s focus on fixing the problem.",
+		"Get your act together Meaning: To organise yourself and improve your behaviour. Example: You need to get your act together if you want to pass this class.",
+		"Kill two birds with one stone Meaning: To solve two problems with one action. Example: By walking to work, I kill two birds with one stone: I save money and get exercise.",
+		"Let the cat out of the bag Meaning: To reveal a secret by mistake. Example: I let the cat out of the bag about the surprise party when I asked her what cake she likes.",
+		"Pull someone’s leg Meaning: To joke with someone by telling them something that isn’t true. Example: Don’t worry, I’m just pulling your leg; I didn’t really sell your bike.",
+		"Burn the midnight oil Meaning: To work late into the night. Example: I’ve been burning the midnight oil to finish this project before the deadline.",
+		"Call it a day Meaning: To stop working on something. Example: We’ve done a lot of work on the report. Let’s call it a day and continue tomorrow."
+	]
+}
+    </textarea>
+</div>
+
+<div id="chat-box">
+    <button onclick="sendMessage()">Post Text</button>
+</div>
+
+<script>
+    // Function to send the message to the /chat endpoint
+    function sendMessage() {
+        var message = document.getElementById("content").value;
+        if (message) {
+            // Use fetch to call the REST API with chatid, input, and user
+            fetch(`/embedding-insert`,{
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: message
+                })
+                .then(response => response.text())
+                .then(data => {
+                    alert("Data posted");
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        } else {
+            alert('Please provide Message in json format!');
+        }
+    }
+</script>
+
+</body>
+</html>
