@@ -3,8 +3,7 @@ name: Run Unit Tests on PR
 on:
   pull_request:
     branches:
-      - main
-      - develop  # Add other branches if needed
+      - '**'  # Triggers on push to any branch after a merge
 
 jobs:
   test:
