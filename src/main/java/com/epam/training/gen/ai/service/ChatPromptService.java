@@ -29,6 +29,7 @@ public class ChatPromptService {
         ChatCompletionService chatCompletionService = chatCompletionProvider.getChatCompletionService(deploymentName);
         InvocationContext invocationContext = invocationContextProvider.createInvocationContext(settings);
         log.info("Model Id : {}", chatCompletionService.getModelId());
+
         List<ChatMessageContent<?>> results = chatCompletionService.getChatMessageContentsAsync(
                 chatHistory,
                 kernel,
