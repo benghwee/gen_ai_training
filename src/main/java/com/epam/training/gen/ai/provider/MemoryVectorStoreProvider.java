@@ -5,6 +5,7 @@ import com.microsoft.semantickernel.aiservices.openai.textembedding.OpenAITextEm
 import com.microsoft.semantickernel.data.VolatileVectorStore;
 import com.microsoft.semantickernel.data.VolatileVectorStoreRecordCollectionOptions;
 import com.microsoft.semantickernel.data.vectorsearch.VectorSearchResults;
+import com.microsoft.semantickernel.data.vectorstorage.options.VectorSearchOptions;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
@@ -23,6 +24,10 @@ public class MemoryVectorStoreProvider {
     private final VolatileVectorStoreRecordCollectionOptions<EmbeddingFile> options =
             VolatileVectorStoreRecordCollectionOptions.<EmbeddingFile>builder()
                     .withRecordClass(EmbeddingFile.class)
+                    .build();
+    private final VectorSearchOptions searchOptions =
+            VectorSearchOptions.builder()
+                    .withTop(3)
                     .build();
 
     public MemoryVectorStoreProvider(OpenAITextEmbeddingGenerationService openAITextEmbeddingService) {
@@ -52,8 +57,9 @@ public class MemoryVectorStoreProvider {
 
     public VectorSearchResults<EmbeddingFile> search(String searchText){
         var collection = volatileVectorStore.getCollection(VECTOR_STORE_NAME, options);
+        VectorSearchOptions options = VectorSearchOptions.createDefault("content");
         return openAITextEmbeddingService.generateEmbeddingAsync(searchText)
-                .flatMap(r -> collection.searchAsync(r.getVector(), null)).block();
+                .flatMap(r -> collection.searchAsync(r.getVector(), searchOptions)).block();
 
     }
 }

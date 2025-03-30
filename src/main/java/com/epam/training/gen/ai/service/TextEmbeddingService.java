@@ -24,10 +24,20 @@ public class TextEmbeddingService {
 
     public List<String> search(String searchText){
         VectorSearchResults<EmbeddingFile> results = memoryVectorStoreProvider.search(searchText);
-        log.info("Search result :");
-        return results.getResults().stream().peek(result -> {})
+        return results.getResults().stream()
                 .map(result -> {
                     String output = String.format("Score: %s Content: %s", result.getScore(), result.getRecord().getContent());
+                    log.info(output);
+                    return output;
+                }).toList();
+    }
+
+    public List<String> search(String searchText, double scoreThreshold){
+        VectorSearchResults<EmbeddingFile> results = memoryVectorStoreProvider.search(searchText);
+        return results.getResults().stream()
+                .filter(result -> result.getScore() > scoreThreshold)
+                .map(result -> {
+                    String output = String.format("%s", result.getRecord().getContent());
                     log.info(output);
                     return output;
                 }).toList();
