@@ -118,7 +118,7 @@
                     // Append the message to the console
                     var consoleDiv = document.getElementById("console");
                     var p = document.createElement("p");
-                    p.textContent = '<pre>' + data.replace(/\\n/g," "); + '</pre>'// The response will be the formatted chat message
+                    p.textContent =  data.replace(/\\n/g," "); // The response will be the formatted chat message
                     consoleDiv.appendChild(p);
                     document.getElementById("message").value = ""; // Clear input field
                     consoleDiv.scrollTop = consoleDiv.scrollHeight; // Auto scroll to bottom
